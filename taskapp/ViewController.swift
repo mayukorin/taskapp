@@ -58,10 +58,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     func tableView(_ tableView: UITableView,numberOfRowsInSection section:Int) -> Int {//データの数（セルの数）を返す
         
-        
-       
-        
-        
+ 
         return taskArray.count;
        
         
@@ -129,6 +126,37 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         tableview.reloadData()
         
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar:UISearchBar) {//searcgbarがクリックされたら
+        
+        searchItems(searchText: searchBar.text! as String)
+    }
+    
+    func searchItems(searchText: String) {
+       
+        if  searchText != "" {
+            
+            taskArray = try! Realm().objects(Task.self).filter("category = %@",searchText).sorted(byKeyPath:"date",ascending:true)//検索したcategoryのtaskだけ持ってくる
+            
+            tableview.reloadData()//テーブルを更新
+            
+        } else {//空白文字だったらtableviewを元に戻す
+            
+            
+            taskArray = try! Realm().objects(Task.self).sorted(byKeyPath:"date",ascending:true)
+            tableview.reloadData()//tableviewを元に戻す
+            uiSearch.resignFirstResponder()//キーボードを閉じる
+            
+            
+        }
+    }
+    
+    func searchBar(_ seachBar: UISearchBar,textDidChange searchText: String) {//検索テキストが変更されたら
+        
+        searchItems(searchText: searchText)
+    }
+    
+    
 
 
 
